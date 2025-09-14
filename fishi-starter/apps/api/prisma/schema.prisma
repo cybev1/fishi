@@ -1,0 +1,81 @@
+// Prisma schema (minimal)
+generator client { provider = "prisma-client-js" }
+datasource db { provider = "postgresql"; url = env("DATABASE_URL") }
+
+model User {
+  id           String   @id @default(uuid())
+  email        String?  @unique
+  phone        String?  @unique
+  passwordHash String?
+  roles        String[] @default(["buyer"])
+  kycStatus    String   @default("pending")
+  influencerId String?
+  createdAt    DateTime @default(now())
+
+  SellerProfile SellerProfile?
+  Listings      Listing[]
+  OrdersBuyer   Order[]  @relation("BuyerOrders")
+  OrdersSeller  Order[]  @relation("SellerOrders")
+}
+
+model SellerProfile {
+  userId   String  @id
+  farmName String?
+  rating   Decimal @default(0)
+  vipTier  String  @default("free")
+  user     User    @relation(fields: [userId], references: [id])
+  Store    Store?
+}
+
+model Store {
+  id        String   @id @default(uuid())
+  sellerId  String
+  name      String
+  slug      String   @unique
+  location  String?
+  status    String   @default("pending")
+  vipTier   String   @default("free")
+  seller    SellerProfile @relation(fields: [sellerId], references: [userId])
+  listings  Listing[]
+}
+
+model Listing {
+  id         String   @id @default(uuid())
+  storeId    String
+  species    String
+  sizeGrade  String?
+  condition  String   // live/fresh/frozen
+  qty        Decimal
+  unit       String
+  priceCents Int
+  currency   String
+  minOrder   Decimal  @default(1)
+  status     String   @default("pending")
+  createdAt  DateTime @default(now())
+  store      Store    @relation(fields: [storeId], references: [id])
+  orders     Order[]
+}
+
+model Order {
+  id        String   @id @default(uuid())
+  buyerId   String
+  sellerId  String
+  listingId String?
+  status    String   @default("created")
+  createdAt DateTime @default(now())
+
+  buyer   User    @relation("BuyerOrders", fields: [buyerId], references: [id])
+  seller  User    @relation("SellerOrders", fields: [sellerId], references: [id])
+  listing Listing? @relation(fields: [listingId], references: [id])
+  escrow  Escrow?
+}
+
+model Escrow {
+  orderId     String  @id
+  amountCents Int
+  currency    String
+  holdState   String
+  releasePlan Json
+  providerRef String?
+  order       Order   @relation(fields: [orderId], references: [id])
+}
