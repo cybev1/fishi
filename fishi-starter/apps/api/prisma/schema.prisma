@@ -21,7 +21,6 @@ model User {
 
   sellerProfile SellerProfile?
   stores        Store[]
-  listings      Listing[]
   ordersBuyer   Order[]  @relation("BuyerOrders")
   ordersSeller  Order[]  @relation("SellerOrders")
 }
@@ -46,6 +45,8 @@ model Store {
 
   seller    User     @relation(fields: [sellerId], references: [id])
   listings  Listing[]
+
+  @@index([sellerId])
 }
 
 model Listing {
@@ -64,6 +65,8 @@ model Listing {
 
   store      Store    @relation(fields: [storeId], references: [id])
   orders     Order[]
+
+  @@index([storeId])
 }
 
 model Order {
@@ -78,6 +81,10 @@ model Order {
   seller    User     @relation("SellerOrders", fields: [sellerId], references: [id])
   listing   Listing? @relation(fields: [listingId], references: [id])
   escrow    Escrow?
+
+  @@index([buyerId])
+  @@index([sellerId])
+  @@index([listingId])
 }
 
 model Escrow {
