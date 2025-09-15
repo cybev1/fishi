@@ -6,7 +6,7 @@ async function bootstrap() {
   app.setGlobalPrefix('v1');
 
   const port = parseInt(process.env.PORT ?? '3001', 10);
-  await app.listen(port, '0.0.0.0');  // <-- critical: bind to all interfaces
+  await app.listen(port, '0.0.0.0'); // bind to all interfaces (required on Railway)
   console.log(`API listening on 0.0.0.0:${port}`);
 }
 bootstrap();
