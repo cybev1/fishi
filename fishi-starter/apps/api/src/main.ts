@@ -4,7 +4,9 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
   app.setGlobalPrefix('v1');
-  await app.listen(process.env.PORT || 3001);
-  console.log('API listening on', await app.getUrl());
+
+  const port = parseInt(process.env.PORT ?? '3001', 10);
+  await app.listen(port, '0.0.0.0');  // <-- critical: bind to all interfaces
+  console.log(`API listening on 0.0.0.0:${port}`);
 }
 bootstrap();
