@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: 255 255 255;
+}
+
+html, body {
+  @apply bg-white text-gray-900;
+}
+
+.gradient-stripe {
+  background: radial-gradient(1200px 600px at 10% -10%, rgba(0, 179, 255, .25), transparent 50%),
+              radial-gradient(1200px 600px at 90% -20%, rgba(0, 255, 179, .25), transparent 50%);
+}
+
+.card {
+  @apply rounded-2xl shadow-floating bg-white/80 backdrop-blur md:border border-white/40;
+}
+
+.card-glass {
+  @apply rounded-2xl bg-white/60 dark:bg-white/10 backdrop-blur-xl border border-white/30 shadow-floating;
+}
